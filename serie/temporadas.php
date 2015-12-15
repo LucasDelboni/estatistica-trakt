@@ -1,45 +1,41 @@
 <?php
     include "../curl.php";
     $serie = $_GET["nome"];
+    $serie = str_replace(" ", "-", $serie);
     $url = "https://api-v2launch.trakt.tv/shows/".$serie."/ratings/";
     $resposta = curl_get($url);
     
     $temporadas = temporadas($serie);
     $notas = Array();
-    for ($i=0;$i<6;$i++){
+    $valores = Array();
+    $tamanho = quantidade_temporadas($serie);
+    for ($i=0;$i<$tamanho;$i++){
         $notas[$i] = curl_get("https://api-v2launch.trakt.tv/shows/".$serie."/seasons/".$i."/ratings");
+        $valores[$i] = $notas[$i][rating];
     }
 ?>
 <!DOCTYPE html>
 <html>
     <head>
+        <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
             google.load('visualization', '1', {packages: ['corechart', 'line']});
             google.setOnLoadCallback(drawCurveTypes);
             
             function drawCurveTypes() {
+                var notas = JSON.parse("<?php echo json_encode($valores);?>");
                 var nome = String ("<?php echo $serie; ?>");
-                var um = Number("<?php echo $notas[1][rating]; ?>");
-                var dois = Number("<?php echo $notas[2][rating]; ?>");
-                var tres= Number("<?php echo $notas[3][rating]; ?>");
-                var q= Number("<?php echo $notas[4][rating]; ?>");
-
+                var tamanho = Number ("<?php echo $tamanho; ?>");
                 
+
                 var data = new google.visualization.DataTable();
-                data.addColumn('number', 'Nota');
-                data.addColumn('number', nome);
+                data.addColumn('number', 'Temporada');
+                data.addColumn('number', "Nota");
                 
-                "<?php for($i=0;$i<6;$i++){ echo $inicio.$i.$virgula.$notas[$i][rating].$final;}?>";
-
-                data.addRows([[0,Number("<?php echo $notas[0][rating]; ?>")]])
-                data.addRows([
-                    [1,  um],
-                    [2,  dois],
-                    [3,  tres],
-                    [4,  q],
-                    [5,  Number("<?php echo $notas[5][rating]; ?>")]
-                ])
+                for(i=0;i<tamanho;i++){
+                    data.addRows([[i,notas[i]]])
+                }
                 
                 var options = {
                     chart: {

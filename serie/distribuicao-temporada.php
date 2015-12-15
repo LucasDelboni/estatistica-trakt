@@ -2,6 +2,7 @@
     include "../curl.php";
     
     $serie = $_GET["nome"];
+    $serie = str_replace(" ", "-", $serie);
     $temporada = $_GET["temporada"];
     $url = "https://api-v2launch.trakt.tv/shows/".$serie."/seasons/".$temporada."/ratings";
     $resposta = curl_get($url);

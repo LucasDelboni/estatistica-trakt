@@ -24,7 +24,7 @@
         <h1>consultar distribuicao de notas em uma temporada</h1>
         <form action="distribuicao-temporada.php" method="get" id="form2" name="form2">
             Nome da serie: <input type="text" name="nome"><br>
-            Temporada: <input type="text" name="temporada"><br>
+            Temporada: <input type="number" name="temporada"><br>
             <input type="submit" value="consultar"/>
         </form> 
         
